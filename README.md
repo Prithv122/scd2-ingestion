@@ -95,7 +95,7 @@ cycle. Full trace in NOTES.md.
 git clone https://github.com/Prithv122/scd2-ingestion.git
 cd scd2-ingestion
 uv sync
-uv run pytest   # 44 tests, 99% coverage, includes the order-independence property test
+uv run pytest   # 45 tests, 99% coverage, includes the order-independence property test
 ```
 
 ```bash

@@ -54,6 +54,15 @@ def test_write_dimension_creates_the_table(tmp_path, sample_dimension) -> None:
         con.close()
 
 
+def test_write_dimension_creates_missing_parent_directories(tmp_path, sample_dimension) -> None:
+    # A clean clone has no `data/` directory -- it holds only a gitignored .duckdb file,
+    # so git never creates it. write_dimension must not assume the parent dir exists.
+    db_path = tmp_path / "data" / "catalog.duckdb"
+    n = write_dimension(sample_dimension, db_path)
+    assert n == 5
+    assert db_path.exists()
+
+
 def test_write_dimension_is_a_clean_replace_not_an_append(tmp_path, sample_dimension) -> None:
     db_path = tmp_path / "catalog.duckdb"
     write_dimension(sample_dimension, db_path)

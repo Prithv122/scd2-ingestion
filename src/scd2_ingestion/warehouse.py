@@ -21,6 +21,7 @@ def write_dimension(
 ) -> int:
     """Replace ``table`` in the DuckDB file at ``db_path`` with the current history."""
     frame = dimension.history_frame()
+    Path(db_path).parent.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect(str(db_path))
     try:
         con.execute(f"DROP TABLE IF EXISTS {table}")

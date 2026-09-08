@@ -95,6 +95,30 @@ test files' worth of fixtures. The lesson isn't "always use fixtures over random
 it's that a single-row, all-null-in-one-column case is exactly the kind of edge a
 coverage tool will point you at and a plausible-looking random dataset won't.
 
+### 2026-09-08 — a third real bug, found by the ship gate's clean-clone check
+
+**Tried:** simulating a fresh `git clone` by moving `data/` aside and running the
+README's documented `simulate --db-path data/catalog.duckdb` command exactly as written.
+
+**Broke:** `_duckdb.IOException: IO Error: Cannot open file ".../data/catalog.duckdb":
+The system cannot find the path specified.` `data/` only ever held a gitignored
+`.duckdb` file (see `.gitignore`'s `*.duckdb` rule), so git never tracks the directory
+itself — a clean clone has no `data/` at all, and `warehouse.write_dimension` called
+`duckdb.connect()` straight on `db_path` without first ensuring its parent directory
+existed. Every local dev run had `data/` sitting there already from a previous run,
+so this had never been exercised.
+
+**Fixed by** adding `Path(db_path).parent.mkdir(parents=True, exist_ok=True)` before
+the `duckdb.connect()` call in `write_dimension`, plus a regression test
+(`test_write_dimension_creates_missing_parent_directories`) that writes to a `tmp_path`
+subdirectory that doesn't exist yet.
+
+**Learned:** a project's own dev environment accumulates state (an existing output
+directory, a populated cache) that silently hides exactly the class of bug a fresh
+clone hits first. "Runs on my machine" and "runs from a clean clone" are different
+claims, and only actually removing the accumulated state — not just reading the
+README and nodding — tells you which one is true.
+
 ---
 
 ## Rejected approaches
