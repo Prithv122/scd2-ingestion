@@ -22,7 +22,7 @@ Python 3.13 · DuckDB · pandas · argparse CLI. No services, no API keys, no en
 - [x] SCD Type 2 history (valid_from/valid_to/is_current), correct point-in-time queries
 - [x] Late-arriving and out-of-order events handled correctly, not just accepted
 - [x] Randomized order-independence proof (500 trials, 0 mismatches), not hand-picked cases
-- [ ] Ship gate passes (`/ship`) — deliberately not run this session (built-not-shipped,
+- [ ] Ship gate passes — deliberately not run this session (built-not-shipped,
       per user request; see PROGRESS.md)
 
 ## Project-specific notes
